@@ -64,4 +64,4 @@ jobs:
         with:
           app-name: 'swift-trails'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_32292E78D37747D38BF46437A113D977 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2A06E997C0A44CBFBFC4F84BE0A021E6 }}
