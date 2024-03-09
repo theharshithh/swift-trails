@@ -1,1 +1,6 @@
 .streamlit/
+
+
+.env
+
+.myenv-lx/

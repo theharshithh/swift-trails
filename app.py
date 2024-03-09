@@ -11,12 +11,13 @@ from io import BytesIO
 from openai import OpenAI
 
 #file imports
-from data_management import get_classyfire_info, get_compound_name_from_smiles
+from data_management import get_classyfire_info
 from tox_as_api import toxicity_organ_mapping, get_toxicity_data, options 
-from patient_manage import read_pdf, patient_flag
+from patient_manage import read_pdf, add_patient, get_patient_condition, get_flag_value
 from complete_tox_report import get_parameters
 
 flag_result ='' 
+reviewed_patients = []
 
 # Home page dir; 
 def home_page():
@@ -68,40 +69,21 @@ def patient_flagging_page():
     # Collect name and age as inputs
     name = st.text_input('Enter Patient Name:', placeholder='John')
     age = st.number_input('Enter Patient Age:', placeholder='31', max_value=150, step=1)
-
     uploaded_file = st.file_uploader("Choose a PDF file", type=["pdf"])
-
-    reviewed_patients = []  # List to store reviewed patient details
 
     if uploaded_file is not None:
         medical_report = read_pdf(uploaded_file)
-
         if medical_report is not None:
             st.write("PDF Content:")
             st.write(medical_report)
-
-            patient_details = ''
-
             if st.button('Submit'):
-                result = patient_flag(patient_details, medical_report)
-                st.write(result)  # Display the result of patient flagging
-                if "True" in result:
-                    flag_result = "Eligible"
-                elif "False" in result:
-                    flag_result = "Ineligible"
-                # Append patient details and result to the list
-                reviewed_patients.append({"Patient Name": name, "Patient Age": age, "Flagging Result": flag_result ,"Explanation": result })
-                
-        else:
-            st.write("Please upload a valid PDF file.")
+                result = get_patient_condition(medical_report)
+                st.write(result)
 
-    # Display the reviewed patient details in a table below the page
-    if reviewed_patients:
-        st.write("Reviewed Patient Details:")
-        st.table(reviewed_patients)
-
-# def similarity_score():
-    
+                flag_val = get_flag_value(result)
+                add_patient(name, age, medical_report, flag_val, result)
+    else:
+        st.write("Please upload a valid PDF file.")
 
 # Navigation
 pages = {
